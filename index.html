@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Польсько-Український Перекладач</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Польсько-Український Перекладач</h1>
+        <form id="translate-form">
+            <label>
+                <input type="radio" name="source_lang" value="pl" checked> Польська
+            </label>
+            <label>
+                <input type="radio" name="source_lang" value="uk"> Українська
+            </label>
+            <input type="text" id="term" name="term" placeholder="Введіть термін" required>
+            <button type="submit">Перекласти</button>
+        </form>
+        <div id="translation-result"></div>
+    </div>
+    <script>
+        document.getElementById('translate-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const term = document.getElementById('term').value;
+            const sourceLang = document.querySelector('input[name="source_lang"]:checked').value;
+
+            fetch('/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'term': term,
+                    'source_lang': sourceLang
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('translation-result').textContent = `Переклад: ${data.target_term}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('translation-result').textContent = 'Сталася помилка під час перекладу.';
+            });
+        });
+    </script>
+</body>
+</html>
