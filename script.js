@@ -8,7 +8,7 @@ async function translateTerm() {
     if (languageSelect === 'uk-pl') {
         translation = dictionary[term];
     } else if (languageSelect === 'pl-uk') {
-        translation = Object.keys(dictionary).find(key => dictionary[key] === term);
+        translation = Object.keys(dictionary).find(key => dictionary[key].toLowerCase() === term);
     }
 
     const translationElement = document.getElementById('translation');
